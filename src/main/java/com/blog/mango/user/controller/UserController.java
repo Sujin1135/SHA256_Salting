@@ -78,7 +78,7 @@ public class UserController {
 		}
 		
 		try {
-			userService.register(user, "tnwls1135@"); // 회원 등록
+			userService.register(user); // 회원 등록
 			resultMap.put("success", resultMessage);
 		} catch (UserAlreadyRegisteredException e) { // 회원 아이디가 이미 존재할 경우
 			resultMap.put("fail", e.getMessage());
