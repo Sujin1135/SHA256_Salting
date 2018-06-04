@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService { // BeanPostProcessor 는 �
 	}
 	
 	@Override
-	public void register(User user, String rawPassword) throws UserAlreadyRegisteredException {
+	public void register(User user) throws UserAlreadyRegisteredException {
 		// 입력된 원본 패스워드를 해시화한 후, 사용자 정보로 설정한다.
 		passwordEncoder.encode(user);
 		int result = userRepository.save(user);
