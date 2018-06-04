@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">	
+	
+	<context:component-scan base-package="com.blog.mango">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<aop:aspectj-autoproxy />
+	<mvc:annotation-driven />
+	
+	<context:property-placeholder location="classpath:application.properties" />
+	
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${datasource.driverClassName}" />
+		<property name="url" value="${datasource.url}" />
+		<property name="username" value="${datasource.username}" />
+		<property name="password" value="${datasource.password}" />
+	</bean>
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="model" />
+		<property name="configLocation" value="${datasource.configLocation}" />
+		<property name="mapperLocations">
+			<array>
+				<value>${datasource.mapperLocations}</value>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- Aspect 빈 설정 -->
+	<!-- 
+		<bean id="loggingAspect" class="com.blog.mango.config.aspect.MethodStartLoggingAspect" /> 
+		@Component("loggingAspect") 라고 해당 클래스에 어노테이션 설정방식으로 컴포넌트를 설정해주었다
+	-->
+	
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" >
+		<property name="converters">
+			<list>
+			<!-- <bean class="com.blog.mango.support.StringToLocalDateValueConverter" /> -->
+				<bean class="com.blog.mango.support.StringToUserConverter" />
+			</list>
+		</property>
+		
+		<property name="formatterRegistrars">
+			<list>
+				<bean class="org.springframework.format.datetime.standard.DateTimeFormatterRegistrar">
+					<property name="dateFormatter" value="BASIC_ISO_DATE" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- aop 설정 -->
+	<aop:config>
+		<!-- Aspect 설정 -->
+		<aop:aspect id="loggingAspect" ref="loggingAspect">
+			<!-- Aspect Advice 설정 -->
+			<aop:after pointcut="execution(* com.blog.mango.user.service.*ServiceImpl.*(..))" method="startLog" />
+		</aop:aspect>
+	</aop:config>
+	
+	<!-- json converter -->
+	<bean id="jsonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" >
+	   <property name="objectMapper">
+	     <bean class="com.fasterxml.jackson.databind.ObjectMapper"/>
+	   </property>
+	</bean>
+		
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+	  <property name="messageConverters">
+	    <list>
+	      <ref bean="jsonMessageConverter"/>
+	    </list>
+	  </property>
+  	</bean>
+	
+</beans>
