@@ -268,30 +268,30 @@ AuthenticationInterceptor
 	}
 	
 UserMapper
-	
-		<!-- 솔트 얻어오기 -->
-		<select id="getSalt" parameterType="String" resultMap="user">
-			select SALT
-			from BLOG_USER
-			where EMAIL = #{email}
-			limit 1
-		</select>
-		
-		<!-- 로그인시 로그인 유지를 체크했을 경우 -->
-		<update id="keepLogin" parameterType="com.blog.mango.user.vo.User">
-			update BLOG_USER
-			<set>
-				SESSION_ID = #{sessionId},
-				SESSION_LIMIT = #{sessionLimit},
-			</set>
-			where EMAIL = #{email}
-		</update>
-		
-		<!-- 자동 로그인 -->
-		<select id="cookieLogin" parameterType="String" resultMap="user">
-			select EMAIL, NAME, GENDER, COMMENT, IMG_PATH
-			from BLOG_USER
-			where SESSION_ID = #{sessionId} and SESSION_LIMIT > now()
-			limit 1
-		</select>
+
+	<!-- 솔트 얻어오기 -->
+	<select id="getSalt" parameterType="String" resultMap="user">
+		select SALT
+		from BLOG_USER
+		where EMAIL = #{email}
+		limit 1
+	</select>
+
+	<!-- 로그인시 로그인 유지를 체크했을 경우 -->
+	<update id="keepLogin" parameterType="com.blog.mango.user.vo.User">
+		update BLOG_USER
+		<set>
+			SESSION_ID = #{sessionId},
+			SESSION_LIMIT = #{sessionLimit},
+		</set>
+		where EMAIL = #{email}
+	</update>
+
+	<!-- 자동 로그인 -->
+	<select id="cookieLogin" parameterType="String" resultMap="user">
+		select EMAIL, NAME, GENDER, COMMENT, IMG_PATH
+		from BLOG_USER
+		where SESSION_ID = #{sessionId} and SESSION_LIMIT > now()
+		limit 1
+	</select>
 		
