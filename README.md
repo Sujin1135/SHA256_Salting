@@ -118,7 +118,7 @@ nullOrValidateCheck
 		}
 	}
 
-### SHA256 + Salt를 이용한 비밀번호 암호화
+### SHA256 + Salt를 이용한 비밀번호 암호화 <hr />
 
 UserServiceImpl
 
@@ -211,7 +211,7 @@ UserMapper.xml
 	
 
 
-### 쿠키와 세션을 이용한 자동 로그인
+### 쿠키와 세션을 이용한 자동 로그인 <hr />
 
 UserController
 
